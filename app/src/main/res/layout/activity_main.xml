@@ -8,11 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/url_endpoint"
-        android:text="45.55.252.190" />
+        android:text="45.55.252.190/api/dan" />
     <EditText android:id="@+id/api_key"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/api_key" />
+        android:hint="@string/api_key"
+        android:text="3d92ebfde53826d346e54dfab499c945525fd5fb2282820f1f51f5ef" />
 
     <TextView
         android:layout_width="match_parent"
@@ -31,8 +32,65 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="testAPI"
-            android:text="@string/button_test" />
+            android:text="@string/button_test"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get Location"
+            android:id="@+id/get_loc"
+            android:layout_weight="1"
+            android:onClick="getLoc" />
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Latitude"
+        android:id="@+id/latitude" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Longitude"
+        android:id="@+id/longitude" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Recording"
+        android:id="@+id/start_rec"
+        android:layout_gravity="center_horizontal"
+        android:onClick="startRec" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop Recording"
+        android:id="@+id/stop_rec"
+        android:layout_gravity="center_horizontal"
+        android:onClick="stopRec" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/filename" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Get Content"
+        android:id="@+id/get_data"
+        android:layout_gravity="center_horizontal"
+        android:onClick="getData" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/data"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
