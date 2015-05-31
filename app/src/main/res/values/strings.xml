@@ -2,7 +2,7 @@
     <string name="app_name">Travel Tracker</string>
     <string name="url_endpoint">url endpoint</string>
     <string name="api_key">api key</string>
-    <string name="button_test">test</string>
+    <string name="button_test">Test AUTH</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
 </resources>
