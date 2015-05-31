@@ -1,5 +1,7 @@
 package com.dankolbman.travelblahg;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -49,11 +51,13 @@ public class MainActivity extends ActionBarActivity {
     private TextView longitudeText;
     private TextView filenameText;
     private ProgressBar progressBarBar;
+    private TextView progressText;
 
     private ListView fileListView;
 
     private File[] files;
     private Boolean isUploading = false;
+    private Boolean isRecording = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +75,13 @@ public class MainActivity extends ActionBarActivity {
         longitudeText = (TextView) findViewById(R.id.longitude);
         filenameText = (TextView) findViewById(R.id.filename);
         fileListView = (ListView) findViewById(R.id.file_list);
-        progressBarBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBarBar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressText = (TextView) findViewById(R.id.progress_text);
         this.getFilesDir().mkdirs();
         filenameText.setText("Saving to: " + this.getFilesDir().getAbsolutePath() + "/" + filename);
 
         File f = new File(this.getFilesDir().getAbsolutePath());
         files = f.listFiles();
-        statusTextView.setText(files[1].getAbsolutePath());
     }
 
     @Override
@@ -135,14 +139,25 @@ public class MainActivity extends ActionBarActivity {
     Start gps service
      */
     public void startRec(View view) {
-        tracker.startRec();
+        if(!isRecording) {
+            isRecording = true;
+            // Base on the current time
+            String filename = System.currentTimeMillis() + ".dat";
+            // Set up tracker
+            tracker = new GpsTracker(this, filename);
+            filenameText.setText("Saving to: " + this.getFilesDir().getAbsolutePath() + "/" + filename);
+            tracker.startRec();
+        }
     }
 
     /*
     Stop gps service
      */
     public void stopRec(View view) {
-        tracker.stopRec();
+        if(isRecording) {
+            isRecording = false;
+            tracker.stopRec();
+        }
     }
 
     /*
@@ -206,6 +221,35 @@ public class MainActivity extends ActionBarActivity {
 
         });
 
+        fileListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, long id) {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(view.getContext());
+                alertDialogBuilder.setTitle("Delete file");
+                alertDialogBuilder
+                        .setMessage("Click yes to delete").setCancelable(false)
+                        .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                final String item = (String) parent.getItemAtPosition(position);
+                                File file = files[files.length - position - 1];
+                                Boolean deleted = file.delete();
+                                list.remove(item);
+                                adapter.notifyDataSetChanged();
+                                dialog.cancel();
+                            }
+                        })
+                        .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+                return true;
+            }
+        });
+
     }
 
     /*
@@ -243,6 +287,7 @@ public class MainActivity extends ActionBarActivity {
     private class UploadTask extends AsyncTask<File, Integer, String> {
 
         private String resp;
+        private int total;
 
         @Override
         protected String doInBackground(File... params) {
@@ -251,7 +296,7 @@ public class MainActivity extends ActionBarActivity {
             File file = params[0];
             String url_string = "http://" + endpoint_string + "/" + api_string + "/ping";
 
-            int total = 1;
+            total = 1;
             try{
                 total = countLines(file);
             } catch (IOException e){
@@ -266,7 +311,7 @@ public class MainActivity extends ActionBarActivity {
                 URL url = new URL(url_string);
                 BufferedReader br = new BufferedReader(new FileReader(file));
                 String line;
-                while ((line = br.readLine()) != null) {
+                while ((line = br.readLine()) != null && attempted-good < 10) {
 
                     // Construct JSON data object
                     JSONObject jsonobj;
@@ -307,11 +352,12 @@ public class MainActivity extends ActionBarActivity {
                                     conn.getInputStream(),"utf-8"));
                             String inresp = null;
                             while ((inresp = in.readLine()) != null) {
-                                sb.append(line + "\n");
+                                sb.append(line);
                             }
                             in.close();
                             resp = sb.toString();
-                            if(resp == "Success") {
+                            Log.d("", resp);
+                            if(resp.substring(0,3).equals("143")) {
                                 good++;
                             }
                         } else {
@@ -325,10 +371,13 @@ public class MainActivity extends ActionBarActivity {
                         e.printStackTrace();
                         resp = e.getMessage();
                     }
-                    publishProgress((int) attempted/total);
+                    publishProgress((int) (attempted));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            if(attempted-good >= 10) {
+                resp = "Stopped Upload. Too many failed POSTs";
             }
             return resp;
         }
@@ -341,12 +390,14 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPreExecute() {
-            statusTextView.setText("Preparing for upload...");
+            statusTextView.setText("Uploading...");
+            progressBarBar.setProgress(0);
         }
 
         @Override
         protected void onProgressUpdate(Integer... prog) {
-            progressBarBar.setProgress(prog[0]);
+            progressBarBar.setProgress((int)(prog[0]*100.0/total));
+            progressText.setText(prog[0].toString() + "/" + Integer.toString(total));
         }
     }
 
@@ -366,8 +417,6 @@ public class MainActivity extends ActionBarActivity {
             jsonobj = new JSONObject();
             try {
                 jsonobj.put("status", "testing");
-                jsonobj.put("description", "Real");
-                jsonobj.put("enable", "true");
             } catch (JSONException ex) {
                 resp = "Error Occurred while building JSON";
                 ex.printStackTrace();
@@ -400,7 +449,7 @@ public class MainActivity extends ActionBarActivity {
                             conn.getInputStream(),"utf-8"));
                     String line = null;
                     while ((line = in.readLine()) != null) {
-                        sb.append(line + "\n");
+                        sb.append(line);
                     }
                     in.close();
                     resp = sb.toString();
@@ -424,7 +473,7 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPreExecute() {
-            statusTextView.setText("Preparing for upload...");
+            statusTextView.setText("Uploading...");
         }
 
         @Override

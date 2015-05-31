@@ -1,19 +1,32 @@
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:background="#ffe3f2fd">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_width="0px"
+        android:layout_height="0px">
+    </LinearLayout>
     <EditText android:id="@+id/url_endpoint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/url_endpoint"
-        android:text="45.55.252.190/api/dan" />
+        android:text="dankolbman.com/api/dan"
+        android:enabled="true"
+        android:textColor="#000000"
+        android:backgroundTint="#2196F3" />
     <EditText android:id="@+id/api_key"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/api_key"
-        android:text="3d92ebfde53826d346e54dfab499c945525fd5fb2282820f1f51f5ef" />
+        android:text="5607f3a3b6f8a17adf727c64dc23995b2f6f7698d18892294a5da385"
+        android:textColor="#000000"
+        android:backgroundTint="#2196F3" />
 
     <TextView
         android:layout_width="match_parent"
@@ -21,7 +34,9 @@
         android:text="status"
         android:id="@+id/status_text"
         style="@style/Base.TextAppearance.AppCompat.Small"
-        android:textStyle="italic" />
+        android:textStyle="italic"
+        android:textColor="#000000"
+        android:paddingLeft="15dp" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -41,7 +56,8 @@
             android:text="Get Location"
             android:id="@+id/get_loc"
             android:layout_weight="1"
-            android:onClick="getLoc" />
+            android:onClick="getLoc"
+            android:backgroundTint="#2196F3" />
 
     </LinearLayout>
 
@@ -50,14 +66,18 @@
         android:layout_height="wrap_content"
         android:text="Latitude"
         android:id="@+id/latitude"
-        android:paddingLeft="15dp" />
+        android:paddingLeft="15dp"
+        android:singleLine="true"
+        android:textColor="#000000" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Longitude"
         android:id="@+id/longitude"
-        android:paddingLeft="15dp" />
+        android:paddingLeft="15dp"
+        android:singleLine="true"
+        android:textColor="#000000" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -71,7 +91,8 @@
             android:text="Start Recording"
             android:id="@+id/start_rec"
             android:onClick="startRec"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:backgroundTint="#2196F3" />
 
         <Button
             android:layout_width="wrap_content"
@@ -79,7 +100,8 @@
             android:text="Stop Recording"
             android:id="@+id/stop_rec"
             android:onClick="stopRec"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:backgroundTint="#2196F3" />
 
     </LinearLayout>
 
@@ -88,7 +110,8 @@
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/filename"
-        android:paddingLeft="15dp" />
+        android:paddingLeft="15dp"
+        android:textColor="#000000" />
 
     <Button
         android:layout_width="fill_parent"
@@ -96,25 +119,45 @@
         android:text="Get Files"
         android:id="@+id/get_files"
         android:layout_gravity="center_horizontal"
-        android:onClick="getFiles" />
+        android:onClick="getFiles"
+        android:backgroundTint="#2196F3" />
 
-    <ProgressBar
-        style="?android:attr/progressBarStyleHorizontal"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBar"
-        android:layout_gravity="center_horizontal" />
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/progress_bar"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:backgroundTint="#2196F3" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:id="@+id/progress_text"
+            android:layout_weight="3"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:textAlignment="center"
+            android:singleLine="true"
+            android:nestedScrollingEnabled="false"
+            android:textColor="#000000" />
+    </LinearLayout>
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/file_list"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/data"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:backgroundTint="#2196F3" />
 
 </LinearLayout>

@@ -36,7 +36,7 @@ public class GpsTracker extends Service implements LocationListener {
     double longitude; // longitude
 
     private static final long UPDATE_DIST = 10; // meters
-    private static final long UPDATE_FREQ = 1000; // milliseconds
+    private static final long UPDATE_FREQ = 1000*60; // milliseconds
 
     String path = "";
     File datafile = null;
